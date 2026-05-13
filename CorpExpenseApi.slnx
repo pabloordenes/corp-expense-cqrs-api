@@ -1,0 +1,6 @@
+<Solution>
+  <Project Path="CorpExpenseApi.Api/CorpExpenseApi.Api.csproj" />
+  <Project Path="CorpExpenseApi.Application/CorpExpenseApi.Application.csproj" />
+  <Project Path="CorpExpenseApi.Domain/CorpExpenseApi.Domain.csproj" />
+  <Project Path="CorpExpenseApi.Infrastructure/CorpExpenseApi.Infrastructure.csproj" />
+</Solution>
