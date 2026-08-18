@@ -13,8 +13,10 @@ namespace CorpExpenseApi.Domain.Entities
         public decimal Amount { get; private set; }
         public string Currency { get; private set; } = "USD";
         public DateTime DateIncurred { get; private set; }
-        public ExpenseStatus Status { get; private set; }
+        public ExpenseStatus Status { get; private set; } = 0;
         public string? ReceiptBlobUrl { get; private set; }
+        public Guid? ApproverId { get; private set; }
+        public string? RejectionReason { get; private set; }
 
         private Expense() { } // constructor para EF
 
@@ -39,23 +41,40 @@ namespace CorpExpenseApi.Domain.Entities
         }
 
         // solo enviamos si esta en borrador
-        public void Submit()
+        public void Submit() 
         {
             if (Status != ExpenseStatus.Draft)
             {
                 throw new DomainException($"No se puede enviar un gasto en estado {Status}.");
-                
-                Status = ExpenseStatus.Submitted;
             }
+            
+            if (Amount <= 0)
+                throw new DomainException("El gasto debe ser mayor a cero.");
+            
+            Status = ExpenseStatus.Submitted;
         }
 
         // transicion a aprovado
-        public void Approve()
+        public void Approve(Guid approverId)
         {
             if (Status != ExpenseStatus.Submitted && Status != ExpenseStatus.UnderReview)
                 throw new DomainException("El gasto debe estar enviado o en revisión para poder ser aprobado.");
 
+            ApproverId = approverId;
             Status = ExpenseStatus.Approved;
+            
+        }
+
+        public void Reject(string reason)
+        {
+            if (Status != ExpenseStatus.Submitted && Status != ExpenseStatus.UnderReview)
+                throw new DomainException("El gasto debe estar enviado o en revisión.");
+
+            if (string.IsNullOrWhiteSpace(reason))
+                throw new DomainException("La razón de rechazo es obligatoria.");
+            
+            Status = ExpenseStatus.Rejected;
+            RejectionReason = reason;   
         }
 
         // comprobante de Azure Blob Storage
