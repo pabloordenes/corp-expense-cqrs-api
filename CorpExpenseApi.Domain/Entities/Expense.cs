@@ -1,17 +1,18 @@
 ﻿using CorpExpenseApi.Domain.Enums;
 using CorpExpenseApi.Domain.Exceptions;
-using System;
-using System.Collections.Generic;
-using System.Text;
+using System.Linq;
 
 namespace CorpExpenseApi.Domain.Entities
 {
     public class Expense
     {
+        private readonly List<ExpenseItem> _items = new();
+        public IReadOnlyCollection<ExpenseItem> Items => _items.AsReadOnly(); 
+            
         public Guid Id { get; private set; }
         public string Description { get; private set; } = string.Empty;
-        public decimal Amount { get; private set; }
         public string Currency { get; private set; } = "USD";
+        public decimal TotalAmount => _items.Sum(i => i.Amount);
         public DateTime DateIncurred { get; private set; }
         public ExpenseStatus Status { get; private set; } = 0;
         public string? ReceiptBlobUrl { get; private set; }
@@ -21,10 +22,8 @@ namespace CorpExpenseApi.Domain.Entities
         private Expense() { } // constructor para EF
 
         // factory method
-        public static Expense Create(string description, decimal amount, string currency, DateTime dateIncurred)
+        public static Expense Create(string description, string currency, DateTime dateIncurred)
         {
-            if (amount <= 0)
-                throw new DomainException("El monto debe ser mayor a cero");
 
             if (string.IsNullOrWhiteSpace(description))
                 throw new DomainException("La descripción es obligatoria");
@@ -33,7 +32,6 @@ namespace CorpExpenseApi.Domain.Entities
             {
                 Id = Guid.NewGuid(),
                 Description = description,
-                Amount = amount,
                 Currency = currency,
                 DateIncurred = dateIncurred,
                 Status = ExpenseStatus.Draft
@@ -48,7 +46,7 @@ namespace CorpExpenseApi.Domain.Entities
                 throw new DomainException($"No se puede enviar un gasto en estado {Status}.");
             }
             
-            if (Amount <= 0)
+            if (TotalAmount <= 0)
                 throw new DomainException("El gasto debe ser mayor a cero.");
             
             Status = ExpenseStatus.Submitted;
@@ -83,6 +81,16 @@ namespace CorpExpenseApi.Domain.Entities
             if (string.IsNullOrWhiteSpace(blobUrl))
                 throw new DomainException("La URL del recibo no puede estar vacía.");
             ReceiptBlobUrl = blobUrl;
+        }
+
+        public void AddItem(string description, decimal amount, string category)
+        {
+            if (Status != ExpenseStatus.Draft)
+                throw new DomainException("Solo se pueden agregar lineas a un gasto en estado borrador.");
+            
+            var newItem = new ExpenseItem(description, amount, category);
+            
+            _items.Add(newItem);
         }
     }
 }

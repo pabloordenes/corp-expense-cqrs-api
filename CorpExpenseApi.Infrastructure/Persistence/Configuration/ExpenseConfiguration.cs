@@ -19,7 +19,7 @@ namespace CorpExpenseApi.Infrastructure.Persistence.Configuration
                 .IsRequired()
                 .HasMaxLength(250);
 
-            builder.Property(e => e.Amount)
+            builder.Property(e => e.TotalAmount)
                 .HasPrecision(18, 2)
                 .IsRequired();
 
