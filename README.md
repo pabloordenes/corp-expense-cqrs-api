@@ -1,5 +1,7 @@
 # CorpExpense CQRS API
 
+> Note: This repository is currently under active development.
+
 Enterprise expense management REST API built with .NET 10. This project serves as a technical demonstration of modern architectural patterns, focusing on strict separation of concerns, domain encapsulation, and cloud-ready infrastructure.
 
 ## Architectural Overview
