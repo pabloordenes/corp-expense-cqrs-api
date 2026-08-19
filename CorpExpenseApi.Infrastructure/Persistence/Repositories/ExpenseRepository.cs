@@ -19,18 +19,21 @@ namespace CorpExpenseApi.Infrastructure.Persistence.Repositories
 
         public async Task<Expense?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
         {
-            return await _context.Expenses.FirstOrDefaultAsync(e => e.Id == id, cancellationToken);
+            return await _context.Expenses
+                .Include(e => e.Items)
+                .FirstOrDefaultAsync(e => e.Id == id, cancellationToken);
         }
 
         public async Task AddAsync(Expense expense, CancellationToken cancellationToken = default)
         {
             await _context.Expenses.AddAsync(expense, cancellationToken);
+            await _context.SaveChangesAsync(cancellationToken);
         }
 
-        public Task UpdateAsync(Expense expense, CancellationToken cancellationToken = default)
+        public async Task UpdateAsync(Expense expense, CancellationToken cancellationToken = default)
         {
             _context.Expenses.Update(expense);
-            return Task.CompletedTask;
+            await _context.SaveChangesAsync(cancellationToken);
         }
     }
 }
