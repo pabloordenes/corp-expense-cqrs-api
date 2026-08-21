@@ -32,7 +32,15 @@ namespace CorpExpenseApi.Infrastructure.Persistence.Repositories
 
         public async Task UpdateAsync(Expense expense, CancellationToken cancellationToken = default)
         {
-            _context.Expenses.Update(expense);
+            foreach (var item in expense.Items)
+            {
+                var entry = _context.Entry(item);
+                if (entry.State == EntityState.Detached || entry.State == EntityState.Modified)
+                {
+                    entry.State = EntityState.Added;
+                }
+            }
+
             await _context.SaveChangesAsync(cancellationToken);
         }
     }

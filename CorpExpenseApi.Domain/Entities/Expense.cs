@@ -7,7 +7,7 @@ namespace CorpExpenseApi.Domain.Entities
     public class Expense
     {
         private readonly List<ExpenseItem> _items = new();
-        public IReadOnlyCollection<ExpenseItem> Items => _items.AsReadOnly(); 
+        public IReadOnlyCollection<ExpenseItem> Items => _items; 
             
         public Guid Id { get; private set; }
         public string Description { get; private set; } = string.Empty;
