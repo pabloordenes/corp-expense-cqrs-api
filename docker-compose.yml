@@ -1,0 +1,17 @@
+﻿version: '3.8'
+
+services:
+  sqlserver-corp:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: sqlserver_corp_expense
+    environment:
+      - ACCEPT_EULA=Y
+      - MSSQL_SA_PASSWORD={SA_PASSWORD}
+      - MSSQL_PID=Developer
+    ports:
+      - "1434:1433"
+    volumes:
+      - sqldata_corp:/var/opt/mssql
+
+volumes:
+  sqldata_corp:
