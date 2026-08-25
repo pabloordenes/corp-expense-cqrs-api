@@ -15,11 +15,20 @@ public class GlobalExceptionHandler : IExceptionHandler
         var title = "Error interno del servidor";
         var detail = "Ha ocurrido un error inesperado.";
 
-        if (exception is DomainException domainException)
+        switch (exception)
         {
-            statusCode = StatusCodes.Status400BadRequest;
-            title = "Error de validación de negocio";
-            detail = domainException.Message;
+            case NotFoundException notFoundException:
+                statusCode = StatusCodes.Status404NotFound;
+                title = "Recurso no encontrado";
+                detail = notFoundException.Message;
+                break;
+            
+            case DomainException domainException:
+                statusCode = StatusCodes.Status400BadRequest;
+                title = "Error de validacion de negocio.";
+                detail = domainException.Message;
+                break;
+            
         }
 
         var problemDetails = new ProblemDetails

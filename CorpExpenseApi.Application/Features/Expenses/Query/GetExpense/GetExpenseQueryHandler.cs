@@ -19,7 +19,7 @@ public class GetExpenseQueryHandler : IRequestHandler<GetExpenseQuery, ExpenseRe
         var expense = await _expenseRepository.GetByIdAsync(request.Id, cancellationToken);
 
         if (expense == null)
-            throw new DomainException($"No se encontró el gasto con ID {request.Id}");
+            throw new NotFoundException($"El gasto con ID {request.Id} no existe en la base de datos.");
 
         return new ExpenseResponse(
             expense.Id,
