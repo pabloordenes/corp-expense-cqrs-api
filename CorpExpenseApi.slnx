@@ -3,4 +3,5 @@
   <Project Path="CorpExpenseApi.Application/CorpExpenseApi.Application.csproj" />
   <Project Path="CorpExpenseApi.Domain/CorpExpenseApi.Domain.csproj" />
   <Project Path="CorpExpenseApi.Infrastructure/CorpExpenseApi.Infrastructure.csproj" />
+  <Project Path="CorpExpenseApi.UnitTests/CorpExpenseApi.UnitTests.csproj" />
 </Solution>
